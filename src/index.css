@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+/* CSS Reset */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100svh;
+  width: 100%;
+}
+
+body {
+  line-height: 1.5;
+  font-family: sans-serif;
+  background: #fff;
+  color: #000;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  border: none;
+  outline: none;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+@theme {
+  --color-primary-red: oklch(0.3171 0.1227 31.25);
+  --color-secondary-red: oklch(0.479 0.1692 26.44);
+  --animate-fade-login-right: fade-login-right 1.5s ease-in-out forwards;
+  --animate-fade-login-left: fade-login-left 0.5s ease-in-out forwards;
+  --animate-fade-register-right: fade-register-right 0.5s ease-in-out forwards;
+  --animate-fade-register-left: fade-register-left 1.5s ease-in-out forwards;
+  --animate-fade-slogan: fade-slogan 0.5s ease-in-out forwards;
+  --animate-show-slogan: show-slogan 1s ease-in-out forwards;
+}
+
+@keyframes fade-login-right {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+
+@keyframes fade-login-left {
+  0% {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes fade-register-right {
+  0% {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fade-register-left {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+
+    transform: translateX(0%);
+  }
+}
+
+@keyframes show-slogan {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-slogan {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
