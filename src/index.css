@@ -50,6 +50,7 @@ ol {
 @theme {
   --color-primary-red: oklch(0.3171 0.1227 31.25);
   --color-secondary-red: oklch(0.479 0.1692 26.44);
+  --color-background: oklch(0.6764 0 0);
   --animate-fade-login-right: fade-login-right 1.5s ease-in-out forwards;
   --animate-fade-login-left: fade-login-left 0.5s ease-in-out forwards;
   --animate-fade-register-right: fade-register-right 0.5s ease-in-out forwards;
