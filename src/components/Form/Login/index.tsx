@@ -1,3 +1,5 @@
+import Button from "../button";
+
 interface FormLoginProps {
   toggleOptions: () => void;
 }
@@ -30,6 +32,7 @@ function FormLogin({ toggleOptions }: FormLoginProps) {
               className="bg-slate-100 text-slate-500 w-sm"
             />
           </div>
+          <Button text="Login" />
           <div className="flex justify-between w-full">
             <span className="text-xs">Lembrar senha</span>
             <div>
