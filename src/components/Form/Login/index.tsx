@@ -1,3 +1,8 @@
+import { useNavigate } from "react-router";
+import { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../../services/firebase/firebaseconnection";
+
 import Button from "../button";
 
 interface FormLoginProps {
@@ -5,6 +10,28 @@ interface FormLoginProps {
 }
 
 function FormLogin({ toggleOptions }: FormLoginProps) {
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const navigate = useNavigate();
+
+  function onSubmitLogin(
+    e: React.FormEvent<HTMLFormElement>,
+    email: string,
+    senha: string
+  ) {
+    e.preventDefault();
+    signInWithEmailAndPassword(auth, email, senha)
+      .then(() => {
+        console.log("Login realizado com sucesso");
+        navigate("/home");
+        setEmail("");
+        setSenha("");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   return (
     <main className="flex flex-col justify-center items-center">
       <h1 className=" mb-7 text-5xl">
@@ -12,8 +39,8 @@ function FormLogin({ toggleOptions }: FormLoginProps) {
       </h1>
       <div className="relative before:content-[''] before:bg-red-600 before:absolute before:top-0 before:h-full before:w-full before:z-[-1] before:opacity-50 before:rounded-lg before:blur-xs">
         <form
-          action=""
           className="flex flex-col p-5 items-center justify-center h-full w-full gap-5 z-10"
+          onSubmit={(e) => onSubmitLogin(e, email, senha)}
         >
           <h1 className="text-2xl font-bold">Login</h1>
           <div className="flex flex-col gap-1 ">
@@ -22,6 +49,8 @@ function FormLogin({ toggleOptions }: FormLoginProps) {
               type="text"
               placeholder="Ex: teste@teste.com"
               className="bg-slate-100 text-slate-500 w-sm"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -30,6 +59,8 @@ function FormLogin({ toggleOptions }: FormLoginProps) {
               type="password"
               placeholder="Password"
               className="bg-slate-100 text-slate-500 w-sm"
+              onChange={(e) => setSenha(e.target.value)}
+              value={senha}
             />
           </div>
           <Button text="Login" />

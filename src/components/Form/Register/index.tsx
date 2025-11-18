@@ -66,8 +66,8 @@ function FormRegister({ toggleOptions }: FormRegisterProps) {
       </h1>
       <div className="relative before:content-[''] before:bg-red-600 before:absolute before:top-0 before:h-full before:w-full before:z-[-1] before:opacity-50 before:rounded-lg before:blur-xs">
         <form
-          action=""
           className="flex flex-col p-5 items-center justify-center h-full w-full gap-5 z-10"
+          onSubmit={(e) => onSubmitRegister(e, nome, email, senha)}
         >
           <h1 className="text-2xl font-bold">Login</h1>
           <div className="flex flex-col gap-1">
@@ -100,10 +100,7 @@ function FormRegister({ toggleOptions }: FormRegisterProps) {
               value={senha}
             />
           </div>
-          <Button
-            text="Registrar"
-            onSubmitRegister={(e) => onSubmitRegister(e, nome, email, senha)}
-          />
+          <Button text="Registrar" />
           <div className="flex justify-between w-full">
             <span className="text-xs">Lembrar senha</span>
             <span className="text-xs">
