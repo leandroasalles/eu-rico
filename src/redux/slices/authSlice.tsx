@@ -40,7 +40,7 @@ export const loginUser = createAsyncThunk(
         senha
       );
       const user = userCredential.user;
-      // Extrai apenas dados serializáveis
+
       return {
         uid: user.uid,
         email: user.email,

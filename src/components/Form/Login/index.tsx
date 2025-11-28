@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { loginUser } from "../../../redux/slices/authSlice";
 
-import Button from "../button";
+import Button from "../Common/button";
 
 interface FormLoginProps {
   toggleOptions: () => void;
@@ -21,7 +21,7 @@ function FormLogin({ toggleOptions }: FormLoginProps) {
   // Redireciona quando autenticado
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/home");
+      navigate("/home", { replace: true });
       setEmail("");
       setSenha("");
     }

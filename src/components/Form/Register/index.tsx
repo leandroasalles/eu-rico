@@ -5,7 +5,7 @@ import {
   // onAuthStateChanged,
 } from "firebase/auth";
 
-import Button from "../button";
+import Button from "../Common/button";
 import { useState } from "react";
 
 interface FormRegisterProps {
