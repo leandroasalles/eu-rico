@@ -1,12 +1,25 @@
 import FormLogin from "../../components/Form/Login";
 import FormRegister from "../../components/Form/Register";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Navigate } from "react-router";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { checkAuthState } from "../../redux/slices/authSlice";
 
 function Login() {
   const [showLogin, setShowLogin] = useState(true);
   const [showRegister, setShowRegister] = useState(false);
   const [showSlogan, setShowSlogan] = useState(true);
   const [showSloganRegister, setShowSloganRegister] = useState(false);
+  const dispatch = useAppDispatch();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    dispatch(checkAuthState());
+  }, [dispatch]);
+
+  if (isAuthenticated) {
+    return <Navigate to="/home" />;
+  }
 
   function toggleOptions() {
     loginToggle();

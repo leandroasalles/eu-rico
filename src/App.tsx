@@ -3,6 +3,8 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Error from "./pages/Error";
 import Private from "./components/Private";
+import { Provider } from "react-redux";
+import store from "./redux/store";
 
 const router = createBrowserRouter([
   {
@@ -13,7 +15,9 @@ const router = createBrowserRouter([
     path: "/home",
     element: (
       <Private>
-        <Home />
+        <Provider store={store}>
+          <Home />
+        </Provider>
       </Private>
     ),
   },

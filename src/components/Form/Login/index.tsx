@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
-import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../services/firebase/firebaseconnection";
+import { useState, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { loginUser } from "../../../redux/slices/authSlice";
 
 import Button from "../button";
 
@@ -13,6 +13,19 @@ function FormLogin({ toggleOptions }: FormLoginProps) {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { loading, error, isAuthenticated } = useAppSelector(
+    (state) => state.auth
+  );
+
+  // Redireciona quando autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home");
+      setEmail("");
+      setSenha("");
+    }
+  }, [isAuthenticated, navigate]);
 
   function onSubmitLogin(
     e: React.FormEvent<HTMLFormElement>,
@@ -20,16 +33,7 @@ function FormLogin({ toggleOptions }: FormLoginProps) {
     senha: string
   ) {
     e.preventDefault();
-    signInWithEmailAndPassword(auth, email, senha)
-      .then(() => {
-        console.log("Login realizado com sucesso");
-        navigate("/home");
-        setEmail("");
-        setSenha("");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    dispatch(loginUser({ email, senha }));
   }
 
   return (
@@ -63,7 +67,15 @@ function FormLogin({ toggleOptions }: FormLoginProps) {
               value={senha}
             />
           </div>
-          <Button text="Login" />
+          {error && (
+            <div className="w-full p-2 bg-red-100 text-red-600 rounded text-sm">
+              {error}
+            </div>
+          )}
+          <Button
+            text={loading ? "Carregando..." : "Login"}
+            disabled={loading}
+          />
           <div className="flex justify-between w-full">
             <span className="text-xs">Lembrar senha</span>
             <div>
