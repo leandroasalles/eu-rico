@@ -21,7 +21,7 @@ function FormLogin({ toggleOptions }: FormLoginProps) {
   // Redireciona quando autenticado
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/home", { replace: true });
+      navigate("/home");
       setEmail("");
       setSenha("");
     }

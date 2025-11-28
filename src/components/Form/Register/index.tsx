@@ -1,12 +1,8 @@
-import { auth } from "../../../services/firebase/firebaseconnection";
-import {
-  createUserWithEmailAndPassword,
-  // updateProfile,
-  // onAuthStateChanged,
-} from "firebase/auth";
-
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { createUser } from "../../../redux/slices/createUserSlice";
 import Button from "../Common/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 interface FormRegisterProps {
   toggleOptions: () => void;
@@ -19,15 +15,12 @@ interface UserData {
 }
 
 function FormRegister({ toggleOptions }: FormRegisterProps) {
-  const [userDataRegister, setUserDataRegister] = useState<UserData>({
-    nome: "",
-    email: "",
-    senha: "",
-  });
+  const dispatch = useAppDispatch();
+  const { loading, error, user } = useAppSelector((state) => state.createUser);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-
+  const navigate = useNavigate();
   function onSubmitRegister(
     e: React.FormEvent<HTMLFormElement>,
     nome: string,
@@ -36,28 +29,14 @@ function FormRegister({ toggleOptions }: FormRegisterProps) {
   ) {
     e.preventDefault();
     const userData: UserData = { nome, email, senha };
-    setUserDataRegister(userData);
-    handleRegister(userData);
+    dispatch(createUser(userData));
   }
 
-  async function handleRegister(userData: UserData) {
-    await createUserWithEmailAndPassword(
-      auth,
-      userData.email,
-      userData.senha
-    ).catch((error) => {
-      console.log(error);
-    });
-
-    setNome("");
-    setEmail("");
-    setSenha("");
-    setUserDataRegister({
-      nome: "",
-      email: "",
-      senha: "",
-    });
-  }
+  useEffect(() => {
+    if (user) {
+      navigate("/home");
+    }
+  }, [user]);
 
   return (
     <main className="flex flex-col justify-center items-center">
@@ -100,7 +79,15 @@ function FormRegister({ toggleOptions }: FormRegisterProps) {
               value={senha}
             />
           </div>
-          <Button text="Registrar" />
+          {error && (
+            <div className="w-full p-2 bg-red-100 text-red-600 rounded text-sm">
+              {error}
+            </div>
+          )}
+          <Button
+            text={loading ? "Carregando..." : "Registrar"}
+            disabled={loading}
+          />
           <div className="flex justify-between w-full">
             <span className="text-xs">Lembrar senha</span>
             <span className="text-xs">
