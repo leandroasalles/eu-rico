@@ -1,23 +1,27 @@
 import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
+import { useAppSelector } from "../../../redux/hooks";
+import { db } from "../../../services/firebase/firebaseconnection";
+import { collection, addDoc } from "firebase/firestore";
 
 interface NewTransactionModalProps {
   onClose: () => void;
 }
 
 interface NewTransactionFormData {
-  description: string;
   value: string | null;
   date: string;
   category: string;
+  userId: string;
 }
 
 function NewTransactionModal({ onClose }: NewTransactionModalProps) {
+  const { user } = useAppSelector((state) => state.auth);
   const [formData, setFormData] = useState<NewTransactionFormData>({
-    description: "",
     value: null,
     date: "",
     category: "",
+    userId: user?.uid || "",
   });
 
   function formatCurrencyValue(value: string): string {
@@ -35,9 +39,12 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
     return value.replace(/\D/g, "");
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(formData);
+
+    const transactionsCollection = collection(db, "transactions");
+    const newTransaction = { formData };
+    await addDoc(transactionsCollection, newTransaction);
     onClose();
   }
 
@@ -46,16 +53,6 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
       <div className="bg-white p-4 rounded-md flex flex-col gap-2 items-end w-full max-w-lg">
         <AiOutlineClose onClick={onClose} className="cursor-pointer" />
         <form className="flex flex-col gap-2 w-full" onSubmit={handleSubmit}>
-          <label htmlFor="description">Descrição</label>
-          <input
-            id="description"
-            type="text"
-            placeholder="Descrição"
-            value={formData.description}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
-          />
           <label htmlFor="value">Valor</label>
           <input
             id="value"
