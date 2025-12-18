@@ -40,12 +40,12 @@ export const loginUser = createAsyncThunk(
         senha
       );
       const user = userCredential.user;
-
-      return {
+      const userData = {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName,
       };
+      return userData;
     } catch (error: any) {
       if (error.code === "auth/invalid-credential") {
         return rejectWithValue("Email ou senha inválidos");
@@ -72,28 +72,36 @@ export const logoutUser = createAsyncThunk(
 export const checkAuthState = createAsyncThunk(
   "auth/checkAuthState",
   async (_, { rejectWithValue }) => {
-    return new Promise<UserData | null>((resolve, reject) => {
-      const unsubscribe = onAuthStateChanged(
-        auth,
-        (user) => {
-          unsubscribe();
-          if (user) {
-            // Extrai apenas dados serializáveis
-            resolve({
-              uid: user.uid,
-              email: user.email,
-              displayName: user.displayName,
-            });
-          } else {
-            resolve(null);
+    try {
+      // Converte o callback do Firebase em uma Promise
+      const user = await new Promise<any>((resolve, reject) => {
+        const unsubscribe = onAuthStateChanged(
+          auth,
+          (user) => {
+            unsubscribe();
+            resolve(user);
+          },
+          (error) => {
+            unsubscribe();
+            reject(error);
           }
-        },
-        (error) => {
-          unsubscribe();
-          reject(rejectWithValue(error.message));
-        }
-      );
-    });
+        );
+      });
+
+      if (user) {
+        // Extrai apenas dados serializáveis
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+        };
+        return userData;
+      } else {
+        return null;
+      }
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Erro ao verificar autenticação");
+    }
   }
 );
 
