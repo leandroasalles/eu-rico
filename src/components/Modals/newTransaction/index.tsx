@@ -7,7 +7,7 @@ interface NewTransactionModalProps {
 
 interface NewTransactionFormData {
   description: string;
-  value: number | null;
+  value: string | null;
   date: string;
   category: string;
 }
@@ -19,6 +19,21 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
     date: "",
     category: "",
   });
+
+  function formatCurrencyValue(value: string): string {
+    if (value === "") {
+      return "";
+    }
+    const formatedValue = (Number(value) / 100).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+    return formatedValue.toString();
+  }
+
+  function sanitizateValue(value: string): string {
+    return value.replace(/\D/g, "");
+  }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -44,12 +59,15 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
           <label htmlFor="value">Valor</label>
           <input
             id="value"
-            type="number"
+            type="text"
             placeholder="Ex: 100,00"
             className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             value={formData.value ?? ""}
             onChange={(e) =>
-              setFormData({ ...formData, value: Number(e.target.value) })
+              setFormData({
+                ...formData,
+                value: formatCurrencyValue(sanitizateValue(e.target.value)),
+              })
             }
           />
           <label htmlFor="date">Data</label>
