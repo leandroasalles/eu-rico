@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { useAppSelector } from "../../../redux/hooks";
+import { type TransactionData } from "../../../types/transaction";
 import { db } from "../../../services/firebase/firebaseconnection";
 import { collection, addDoc } from "firebase/firestore";
 
@@ -8,16 +9,9 @@ interface NewTransactionModalProps {
   onClose: () => void;
 }
 
-interface NewTransactionFormData {
-  value: string | null;
-  date: string;
-  category: string;
-  userId: string;
-}
-
 function NewTransactionModal({ onClose }: NewTransactionModalProps) {
   const { user } = useAppSelector((state) => state.auth);
-  const [formData, setFormData] = useState<NewTransactionFormData>({
+  const [formData, setFormData] = useState<TransactionData>({
     value: null,
     date: "",
     category: "",
@@ -43,7 +37,12 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
     e.preventDefault();
 
     const transactionsCollection = collection(db, "transactions");
-    const newTransaction = { formData };
+    const newTransaction = {
+      value: formData.value,
+      date: formData.date,
+      category: formData.category,
+      userId: user?.uid || "",
+    };
     await addDoc(transactionsCollection, newTransaction);
     onClose();
   }
