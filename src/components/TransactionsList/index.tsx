@@ -34,7 +34,20 @@ export default function TransactionsList() {
               )}
             </span>
             <span className="w-full">{transaction.category}</span>
-            <span className="w-full">R$ {transaction.value}</span>
+            <span
+              className={`w-full ${
+                transaction.type === "despesa"
+                  ? "text-red-500"
+                  : "text-green-500"
+              }`}
+            >
+              {transaction.value
+                ? Number(transaction.value).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })
+                : "R$ 0,00"}
+            </span>
           </div>
         ))
       )}

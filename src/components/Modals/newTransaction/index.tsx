@@ -29,11 +29,15 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
     if (value === "") {
       return "";
     }
-    const formatedValue = (Number(value) / 100).toLocaleString("pt-BR", {
+    const formatedValue = Number(value) / 100;
+    return formatedValue.toString();
+  }
+
+  function toLocaleString(value: string): string {
+    return Number(value).toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
     });
-    return formatedValue.toString();
   }
 
   function sanitizateValue(value: string): string {
@@ -64,13 +68,17 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
       return;
     }
 
+    if (formData.type && formData.type === "despesa") {
+      formData.value = `-${formData.value}`;
+    }
+
     const transactionsCollection = collection(db, "transactions");
     const newTransaction = {
       id: createUuid(),
-      value: formData.value,
+      value: Number(formData.value),
       date: formData.date,
       category: formData.category,
-      userId: user?.uid || "",
+      userId: user.uid,
       type: formData.type,
     };
     await addDoc(transactionsCollection, newTransaction);
@@ -90,7 +98,7 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
             placeholder="Ex: 100,00"
             className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-1 border-gray-300 rounded-md p-2"
             required
-            value={formData.value ?? ""}
+            value={formData.value ? toLocaleString(formData.value) : ""}
             onChange={(e) =>
               setFormData({
                 ...formData,
