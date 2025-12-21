@@ -6,6 +6,7 @@ import { db } from "../../../services/firebase/firebaseconnection";
 import { collection, addDoc } from "firebase/firestore";
 import { v4 as createUuid } from "uuid";
 import { getTransactions } from "../../../redux/slices/transactionsSlice";
+import { categoriesList } from "../../../types/categoriesList";
 
 interface NewTransactionModalProps {
   onClose: () => void;
@@ -109,9 +110,11 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
             <option value="select_category" disabled>
               Selecione uma categoria
             </option>
-            <option value="receita">Receita</option>
-            <option value="despesa">Despesa</option>
-            <option value="investimento">Investimento</option>
+            {categoriesList.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
           </select>
           {error && <div className="text-red-500 text-sm">{error}</div>}
           <button
