@@ -17,6 +17,7 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
     category: "",
     userId: user?.uid || "",
   });
+  const [error, setError] = useState<string | null>(null);
 
   function formatCurrencyValue(value: string): string {
     if (value === "") {
@@ -33,8 +34,17 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
     return value.replace(/\D/g, "");
   }
 
+  function isCategoryValid(): boolean {
+    return formData.category !== "" && formData.category !== "select_category";
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (!isCategoryValid()) {
+      setError("Selecione uma categoria");
+      return;
+    }
 
     const transactionsCollection = collection(db, "transactions");
     const newTransaction = {
@@ -57,7 +67,8 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
             id="value"
             type="text"
             placeholder="Ex: 100,00"
-            className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-1 border-gray-300 rounded-md p-2"
+            required
             value={formData.value ?? ""}
             onChange={(e) =>
               setFormData({
@@ -71,6 +82,8 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
             id="date"
             type="date"
             placeholder="Data"
+            required
+            className="border-1 border-gray-300 rounded-md p-2"
             value={formData.date}
             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
           />
@@ -78,6 +91,7 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
           <select
             id="category"
             name="category"
+            className="border-1 border-gray-300 rounded-md p-2"
             value={formData.category || "select_category"}
             onChange={(e) =>
               setFormData({ ...formData, category: e.target.value })
@@ -90,6 +104,7 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
             <option value="despesa">Despesa</option>
             <option value="investimento">Investimento</option>
           </select>
+          {error && <div className="text-red-500 text-sm">{error}</div>}
           <button
             type="submit"
             className="bg-green-600 text-white rounded-md border-black border-1 cursor-pointer hover:bg-green-700 transition-all duration-300 mt-4"
