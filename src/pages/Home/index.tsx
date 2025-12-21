@@ -5,7 +5,10 @@ import NewTransactionModal from "../../components/Modals/newTransaction";
 import TransactionsList from "../../components/TransactionsList";
 
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { getTransactions } from "../../redux/slices/transactionsSlice";
+import {
+  getTransactions,
+  filterTransactions,
+} from "../../redux/slices/transactionsSlice";
 
 import { useState, useEffect } from "react";
 
@@ -52,11 +55,13 @@ function Home() {
     );
   }
 
-  function handleFilter() {
+  async function handleFilter() {
     if (user) {
-      dispatch(
-        getTransactions({ userUid: user.uid, month: month, year: year })
-      );
+      await dispatch(getTransactions({ userUid: user.uid, month: 0, year: 0 }));
+
+      if (month !== 0 && year !== 0) {
+        dispatch(filterTransactions({ month: month, year: year }));
+      }
       setMonth(0);
       setYear(0);
     }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-import { useAppSelector } from "../../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { getTransactions } from "../../../redux/slices/transactionsSlice";
 
 import { type TransactionData } from "../../../types/transaction";
 import { categoriesList } from "../../../types/categoriesList";
@@ -18,6 +19,7 @@ interface NewTransactionModalProps {
 
 function NewTransactionModal({ onClose }: NewTransactionModalProps) {
   const { user } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
   const [formData, setFormData] = useState<TransactionData>({
     id: "",
     value: null,
@@ -94,7 +96,7 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
       year: getMonthAndYear(formData.date).year,
     };
     await addDoc(transactionsCollection, newTransaction);
-    // dispatch(getTransactions(user?.uid));
+    dispatch(getTransactions({ userUid: user.uid, month: 0, year: 0 }));
     onClose();
   }
 

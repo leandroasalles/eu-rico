@@ -63,6 +63,13 @@ const transactionsSlice = createSlice({
     resetTransactions: (state) => {
       state.transactions = [];
     },
+    filterTransactions: (state, action) => {
+      state.transactions = state.transactions.filter(
+        (transaction: TransactionData) =>
+          transaction.month === action.payload.month &&
+          transaction.year === action.payload.year
+      );
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -78,5 +85,6 @@ const transactionsSlice = createSlice({
   },
 });
 
-export const { resetTransactions } = transactionsSlice.actions;
+export const { resetTransactions, filterTransactions } =
+  transactionsSlice.actions;
 export default transactionsSlice.reducer;

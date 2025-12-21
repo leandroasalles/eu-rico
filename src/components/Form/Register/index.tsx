@@ -10,7 +10,7 @@ interface FormRegisterProps {
 
 function FormRegister({ toggleOptions }: FormRegisterProps) {
   const dispatch = useAppDispatch();
-  const { loading, error, user } = useAppSelector((state) => state.createUser);
+  const { loading, error, user } = useAppSelector((state) => state.user);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
