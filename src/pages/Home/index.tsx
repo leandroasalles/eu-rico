@@ -3,22 +3,44 @@ import SideMenu from "../../components/SideMenu";
 import ResumeCard from "../../components/Cards/resumeCard";
 import NewTransactionModal from "../../components/Modals/newTransaction";
 import TransactionsList from "../../components/TransactionsList";
+import { useAppSelector } from "../../redux/hooks";
 import { useState, useEffect } from "react";
 
 function Home() {
   const [saldo, setSaldo] = useState(0);
-  const [receitas, setReceitas] = useState(500);
-  const [despesas, setDespesas] = useState(-100);
+  const [receitas, setReceitas] = useState(0);
+  const [despesas, setDespesas] = useState(0);
   const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] =
     useState(false);
+  const { transactions } = useAppSelector((state) => state.transactions);
   useEffect(() => {
-    handleSaldo();
-  }, [receitas, despesas]);
+    handleReceitas();
+    handleDespesas();
+    setSaldo(receitas + despesas);
+  }, [transactions, receitas, despesas]);
 
-  function handleSaldo() {
-    const saldo = [receitas, despesas];
-    const saldoTotal = saldo.reduce((acc, curr) => acc + curr, 0);
-    setSaldo(saldoTotal);
+  function handleReceitas() {
+    if (transactions.length === 0) {
+      setReceitas(0);
+      return;
+    }
+    setReceitas(
+      transactions
+        .filter((transaction) => transaction.type === "receita")
+        .reduce((acc, curr) => acc + Number(curr.value), 0)
+    );
+  }
+
+  function handleDespesas() {
+    if (transactions.length === 0) {
+      setDespesas(0);
+      return;
+    }
+    setDespesas(
+      transactions
+        .filter((transaction) => transaction.type === "despesa")
+        .reduce((acc, curr) => acc + Number(curr.value), 0)
+    );
   }
 
   return (
