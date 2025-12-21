@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { loginUser } from "../../../redux/slices/authSlice";
+import { loginUser } from "../../../redux/slices/userSlice";
 
 import Button from "../Common/button";
 
@@ -15,7 +15,7 @@ function FormLogin({ toggleOptions }: FormLoginProps) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { loading, error, isAuthenticated } = useAppSelector(
-    (state) => state.auth
+    (state) => state.user
   );
 
   // Redireciona quando autenticado

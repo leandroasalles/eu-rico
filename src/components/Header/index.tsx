@@ -1,6 +1,6 @@
 import { AiOutlineLogout } from "react-icons/ai";
 import { useAppDispatch } from "../../redux/hooks";
-import { logoutUser } from "../../redux/slices/authSlice";
+import { logoutUser } from "../../redux/slices/userSlice";
 
 function Header() {
   const dispatch = useAppDispatch();

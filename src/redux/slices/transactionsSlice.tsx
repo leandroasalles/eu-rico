@@ -15,11 +15,9 @@ const initialState: TransactionsState = {
 export const getTransactions = createAsyncThunk(
   "transactions/getTransactions",
   async (_, { rejectWithValue, getState }) => {
-    try {
-      // Acessa o estado do Redux para obter o usuário logado
-      const state = getState() as RootState;
-      const user = state.auth.user;
+    const user = (getState() as RootState).user.user;
 
+    try {
       if (!user) {
         return rejectWithValue("Usuário não autenticado");
       }

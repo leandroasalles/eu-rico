@@ -1,17 +1,11 @@
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { createUser } from "../../../redux/slices/createUserSlice";
+import { registerUser } from "../../../redux/slices/userSlice";
 import Button from "../Common/button";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 interface FormRegisterProps {
   toggleOptions: () => void;
-}
-
-interface UserData {
-  nome: string;
-  email: string;
-  senha: string;
 }
 
 function FormRegister({ toggleOptions }: FormRegisterProps) {
@@ -23,13 +17,11 @@ function FormRegister({ toggleOptions }: FormRegisterProps) {
   const navigate = useNavigate();
   function onSubmitRegister(
     e: React.FormEvent<HTMLFormElement>,
-    nome: string,
     email: string,
     senha: string
   ) {
     e.preventDefault();
-    const userData: UserData = { nome, email, senha };
-    dispatch(createUser(userData));
+    dispatch(registerUser({ email, senha }));
   }
 
   useEffect(() => {
@@ -46,7 +38,7 @@ function FormRegister({ toggleOptions }: FormRegisterProps) {
       <div className="relative before:content-[''] before:bg-red-600 before:absolute before:top-0 before:h-full before:w-full before:z-[-1] before:opacity-50 before:rounded-lg before:blur-xs">
         <form
           className="flex flex-col p-5 items-center justify-center h-full w-full gap-5 z-10"
-          onSubmit={(e) => onSubmitRegister(e, nome, email, senha)}
+          onSubmit={(e) => onSubmitRegister(e, email, senha)}
         >
           <h1 className="text-2xl font-bold">Login</h1>
           <div className="flex flex-col gap-1">

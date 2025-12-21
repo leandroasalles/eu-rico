@@ -1,11 +1,11 @@
 import { Navigate } from "react-router";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { checkAuthState } from "../../redux/slices/authSlice";
+import { checkAuthState } from "../../redux/slices/userSlice";
 
 function Private({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
-  const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, loading } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(checkAuthState());

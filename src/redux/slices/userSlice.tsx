@@ -3,6 +3,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../../services/firebase/firebaseconnection";
 
@@ -12,23 +13,48 @@ interface UserData {
   displayName: string | null;
 }
 
-interface AuthState {
+interface UserState {
   user: UserData | null;
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
 }
 
-const initialState: AuthState = {
+const initialState: UserState = {
   user: null,
   loading: false,
   error: null,
   isAuthenticated: false,
 };
 
+export const registerUser = createAsyncThunk(
+  "user/register",
+  async (
+    { email, senha }: { email: string; senha: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        senha
+      );
+      const user = userCredential.user;
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+      };
+      return userData;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 // Thunk para login
 export const loginUser = createAsyncThunk(
-  "auth/login",
+  "user/login",
   async (
     { email, senha }: { email: string; senha: string },
     { rejectWithValue }
@@ -57,7 +83,7 @@ export const loginUser = createAsyncThunk(
 
 // Thunk para logout
 export const logoutUser = createAsyncThunk(
-  "auth/logout",
+  "user/logout",
   async (_, { rejectWithValue }) => {
     try {
       await signOut(auth);
@@ -70,7 +96,7 @@ export const logoutUser = createAsyncThunk(
 
 // Thunk para verificar estado de autenticação
 export const checkAuthState = createAsyncThunk(
-  "auth/checkAuthState",
+  "user/checkAuthState",
   async (_, { rejectWithValue }) => {
     try {
       // Converte o callback do Firebase em uma Promise
@@ -105,12 +131,28 @@ export const checkAuthState = createAsyncThunk(
   }
 );
 
-const authSlice = createSlice({
-  name: "auth",
+const userSlice = createSlice({
+  name: "user",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // Login
+    builder
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.error = null;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+        state.isAuthenticated = false;
+      });
+
     builder
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
@@ -128,7 +170,6 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
       });
 
-    // Logout
     builder
       .addCase(logoutUser.pending, (state) => {
         state.loading = true;
@@ -145,7 +186,6 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Check Auth State
     builder
       .addCase(checkAuthState.pending, (state) => {
         state.loading = true;
@@ -163,4 +203,4 @@ const authSlice = createSlice({
   },
 });
 
-export default authSlice.reducer;
+export default userSlice.reducer;

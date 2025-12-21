@@ -3,7 +3,7 @@ import FormRegister from "../../components/Form/Register";
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { checkAuthState } from "../../redux/slices/authSlice";
+import { checkAuthState } from "../../redux/slices/userSlice";
 
 function Login() {
   const [showLogin, setShowLogin] = useState(true);
@@ -11,7 +11,7 @@ function Login() {
   const [showSlogan, setShowSlogan] = useState(true);
   const [showSloganRegister, setShowSloganRegister] = useState(false);
   const dispatch = useAppDispatch();
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(checkAuthState());

@@ -5,7 +5,7 @@ import { getTransactions } from "../../redux/slices/transactionsSlice";
 export default function TransactionsList() {
   const dispatch = useAppDispatch();
   const { transactions } = useAppSelector((state) => state.transactions);
-  const { user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     if (user) {
