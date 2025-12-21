@@ -4,4 +4,5 @@ export interface TransactionData {
   date: string;
   category: string;
   userId: string;
+  type: string;
 }

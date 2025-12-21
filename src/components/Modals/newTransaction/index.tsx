@@ -21,6 +21,7 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
     date: "",
     category: "",
     userId: user?.uid || "",
+    type: "select_type",
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -43,6 +44,10 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
     return formData.category !== "" && formData.category !== "select_category";
   }
 
+  function isTypeValid(): boolean {
+    return formData.type !== "" && formData.type !== "select_type";
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!user) {
@@ -50,7 +55,12 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
     }
 
     if (!isCategoryValid()) {
-      setError("Selecione uma categoria");
+      setError("Selecione uma opção válida");
+      return;
+    }
+
+    if (!isTypeValid()) {
+      setError("Selecione uma opção válida	");
       return;
     }
 
@@ -61,6 +71,7 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
       date: formData.date,
       category: formData.category,
       userId: user?.uid || "",
+      type: formData.type,
     };
     await addDoc(transactionsCollection, newTransaction);
     dispatch(getTransactions(user?.uid));
@@ -116,7 +127,26 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
               </option>
             ))}
           </select>
-          {error && <div className="text-red-500 text-sm">{error}</div>}
+          {!isCategoryValid() && (
+            <div className="text-red-500 text-sm">{error}</div>
+          )}
+          <label htmlFor="type">Tipo de transação</label>
+          <select
+            id="type"
+            name="type"
+            className="border-1 border-gray-300 rounded-md p-2"
+            value={formData.type || "select_type"}
+            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+          >
+            <option value="select_type" disabled>
+              Selecione o tipo da transação
+            </option>
+            <option value="receita">Receita</option>
+            <option value="despesa">Despesa</option>
+          </select>
+          {!isTypeValid() && (
+            <div className="text-red-500 text-sm">{error}</div>
+          )}
           <button
             type="submit"
             className="bg-green-600 text-white rounded-md border-black border-1 cursor-pointer hover:bg-green-700 transition-all duration-300 mt-4"
