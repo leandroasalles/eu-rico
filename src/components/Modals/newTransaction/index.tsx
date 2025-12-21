@@ -1,12 +1,16 @@
 import { useState } from "react";
-import { AiOutlineClose } from "react-icons/ai";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+
+import { useAppSelector } from "../../../redux/hooks";
+
 import { type TransactionData } from "../../../types/transaction";
+import { categoriesList } from "../../../types/categoriesList";
+
 import { db } from "../../../services/firebase/firebaseconnection";
 import { collection, addDoc } from "firebase/firestore";
+
 import { v4 as createUuid } from "uuid";
-import { getTransactions } from "../../../redux/slices/transactionsSlice";
-import { categoriesList } from "../../../types/categoriesList";
+
+import { AiOutlineClose } from "react-icons/ai";
 
 interface NewTransactionModalProps {
   onClose: () => void;
@@ -14,7 +18,6 @@ interface NewTransactionModalProps {
 
 function NewTransactionModal({ onClose }: NewTransactionModalProps) {
   const { user } = useAppSelector((state) => state.user);
-  const dispatch = useAppDispatch();
   const [formData, setFormData] = useState<TransactionData>({
     id: "",
     value: null,
@@ -22,6 +25,8 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
     category: "",
     userId: user?.uid || "",
     type: "select_type",
+    month: 0,
+    year: 0,
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -31,6 +36,11 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
     }
     const formatedValue = Number(value) / 100;
     return formatedValue.toString();
+  }
+
+  function getMonthAndYear(date: string): { month: number; year: number } {
+    const [year, month] = date.split("-");
+    return { month: Number(month), year: Number(year) };
   }
 
   function toLocaleString(value: string): string {
@@ -80,9 +90,11 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
       category: formData.category,
       userId: user.uid,
       type: formData.type,
+      month: getMonthAndYear(formData.date).month,
+      year: getMonthAndYear(formData.date).year,
     };
     await addDoc(transactionsCollection, newTransaction);
-    dispatch(getTransactions(user?.uid));
+    // dispatch(getTransactions(user?.uid));
     onClose();
   }
 

@@ -13,18 +13,34 @@ const initialState: TransactionsState = {
 
 export const getTransactions = createAsyncThunk(
   "transactions/getTransactions",
-  async (userUid: string, { rejectWithValue }) => {
+  async (
+    { userUid, month, year }: { userUid: string; month: number; year: number },
+    { rejectWithValue }
+  ) => {
     try {
       if (!userUid) {
         return rejectWithValue("Usuário não autenticado");
       }
 
       const transactionsCollection = collection(db, "transactions");
-      const q = query(
-        transactionsCollection,
-        where("userId", "==", userUid),
-        orderBy("date", "desc")
-      );
+      let q = null;
+
+      if (month !== 0 && year !== 0) {
+        q = query(
+          transactionsCollection,
+          where("userId", "==", userUid),
+          where("month", "==", month),
+          where("year", "==", year),
+          orderBy("date", "desc")
+        );
+      } else {
+        q = query(
+          transactionsCollection,
+          where("userId", "==", userUid),
+          orderBy("date", "desc")
+        );
+      }
+
       const querySnapshot = await getDocs(q);
 
       const transactions = querySnapshot.docs.map((doc) => {
@@ -43,9 +59,16 @@ export const getTransactions = createAsyncThunk(
 const transactionsSlice = createSlice({
   name: "transactions",
   initialState,
-  reducers: {},
+  reducers: {
+    resetTransactions: (state) => {
+      state.transactions = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
+      .addCase(getTransactions.pending, (state) => {
+        state.transactions = [];
+      })
       .addCase(getTransactions.fulfilled, (state, action) => {
         state.transactions = action.payload;
       })
@@ -55,4 +78,5 @@ const transactionsSlice = createSlice({
   },
 });
 
+export const { resetTransactions } = transactionsSlice.actions;
 export default transactionsSlice.reducer;
