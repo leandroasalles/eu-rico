@@ -2,10 +2,9 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { type TransactionData } from "../../types/transaction";
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../../services/firebase/firebaseconnection";
-import type { RootState } from "../store";
 
 interface TransactionsState {
-  transactions: (TransactionData & { id?: string })[];
+  transactions: TransactionData[];
 }
 
 const initialState: TransactionsState = {
@@ -14,18 +13,16 @@ const initialState: TransactionsState = {
 
 export const getTransactions = createAsyncThunk(
   "transactions/getTransactions",
-  async (_, { rejectWithValue, getState }) => {
-    const user = (getState() as RootState).user.user;
-
+  async (userUid: string, { rejectWithValue }) => {
     try {
-      if (!user) {
+      if (!userUid) {
         return rejectWithValue("Usuário não autenticado");
       }
 
       const transactionsCollection = collection(db, "transactions");
       const q = query(
         transactionsCollection,
-        where("userId", "==", user.uid),
+        where("userId", "==", userUid),
         orderBy("date", "desc")
       );
       const querySnapshot = await getDocs(q);
@@ -33,9 +30,8 @@ export const getTransactions = createAsyncThunk(
       const transactions = querySnapshot.docs.map((doc) => {
         const data = doc.data();
         return {
-          id: doc.id,
           ...data,
-        } as TransactionData & { id: string };
+        } as TransactionData;
       });
       return transactions;
     } catch (error: any) {

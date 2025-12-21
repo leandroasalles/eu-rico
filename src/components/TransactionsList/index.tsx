@@ -9,7 +9,7 @@ export default function TransactionsList() {
 
   useEffect(() => {
     if (user) {
-      dispatch(getTransactions());
+      dispatch(getTransactions(user.uid));
     }
   }, [dispatch, user]);
 

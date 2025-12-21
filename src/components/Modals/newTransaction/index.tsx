@@ -4,6 +4,7 @@ import { useAppSelector } from "../../../redux/hooks";
 import { type TransactionData } from "../../../types/transaction";
 import { db } from "../../../services/firebase/firebaseconnection";
 import { collection, addDoc } from "firebase/firestore";
+import { v4 as createUuid } from "uuid";
 
 interface NewTransactionModalProps {
   onClose: () => void;
@@ -12,6 +13,7 @@ interface NewTransactionModalProps {
 function NewTransactionModal({ onClose }: NewTransactionModalProps) {
   const { user } = useAppSelector((state) => state.user);
   const [formData, setFormData] = useState<TransactionData>({
+    id: "",
     value: null,
     date: "",
     category: "",
@@ -48,6 +50,7 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
 
     const transactionsCollection = collection(db, "transactions");
     const newTransaction = {
+      id: createUuid(),
       value: formData.value,
       date: formData.date,
       category: formData.category,
