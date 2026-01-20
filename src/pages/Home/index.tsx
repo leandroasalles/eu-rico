@@ -11,6 +11,7 @@ import {
 } from "../../redux/slices/transactionsSlice";
 
 import { useState, useEffect } from "react";
+import { currentMonth, currentYear } from "../../components/Common/currentDate";
 
 function Home() {
   const dispatch = useAppDispatch();
@@ -61,7 +62,11 @@ function Home() {
 
       if (month !== 0 && year !== 0) {
         dispatch(filterTransactions({ month: month, year: year }));
+        setMonth(0);
+        setYear(0);
+        return;
       }
+      dispatch(filterTransactions({ month: currentMonth, year: currentYear }));
       setMonth(0);
       setYear(0);
     }

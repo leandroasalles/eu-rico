@@ -5,6 +5,7 @@ import { getTransactions } from "../../../redux/slices/transactionsSlice";
 
 import { type TransactionData } from "../../../types/transaction";
 import { categoriesList } from "../../../types/categoriesList";
+import { currentMonth, currentYear } from "../../Common/currentDate";
 
 import { db } from "../../../services/firebase/firebaseconnection";
 import { collection, addDoc } from "firebase/firestore";
@@ -76,7 +77,7 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
     }
 
     if (!isTypeValid()) {
-      setError("Selecione uma opção válida	");
+      setError("Selecione uma opção válida");
       return;
     }
 
@@ -96,7 +97,13 @@ function NewTransactionModal({ onClose }: NewTransactionModalProps) {
       year: getMonthAndYear(formData.date).year,
     };
     await addDoc(transactionsCollection, newTransaction);
-    dispatch(getTransactions({ userUid: user.uid, month: 0, year: 0 }));
+    dispatch(
+      getTransactions({
+        userUid: user.uid,
+        month: currentMonth,
+        year: currentYear,
+      })
+    );
     onClose();
   }
 
