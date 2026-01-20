@@ -5,10 +5,12 @@ import { db } from "../../services/firebase/firebaseconnection";
 
 interface TransactionsState {
   transactions: TransactionData[];
+  filteredTransactions: TransactionData[];
 }
 
 const initialState: TransactionsState = {
   transactions: [],
+  filteredTransactions: [],
 };
 
 export const getTransactions = createAsyncThunk(
@@ -62,9 +64,10 @@ const transactionsSlice = createSlice({
   reducers: {
     resetTransactions: (state) => {
       state.transactions = [];
+      state.filteredTransactions = [];
     },
     filterTransactions: (state, action) => {
-      state.transactions = state.transactions.filter(
+      state.filteredTransactions = state.transactions.filter(
         (transaction: TransactionData) =>
           transaction.month === action.payload.month &&
           transaction.year === action.payload.year
@@ -75,12 +78,15 @@ const transactionsSlice = createSlice({
     builder
       .addCase(getTransactions.pending, (state) => {
         state.transactions = [];
+        state.filteredTransactions = [];
       })
       .addCase(getTransactions.fulfilled, (state, action) => {
         state.transactions = action.payload;
+        state.filteredTransactions = action.payload;
       })
       .addCase(getTransactions.rejected, (state) => {
         state.transactions = [];
+        state.filteredTransactions = [];
       });
   },
 });

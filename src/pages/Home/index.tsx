@@ -27,34 +27,34 @@ function Home() {
   const [year, setYear] = useState(0);
 
   useEffect(() => {
-    handleReceitas();
-    handleDespesas();
-    setSaldo(receitas + despesas);
-  }, [transactions, receitas, despesas]);
+    async function handleGetTransactions() {
+      if (user) {
+        await dispatch(getTransactions({ userUid: user.uid, month: 0, year: 0 }));
+      }
+    }
+    handleGetTransactions();
+  }, [user, dispatch]);
 
-  function handleReceitas() {
+  useEffect(() => {
     if (transactions.length === 0) {
       setReceitas(0);
-      return;
-    }
-    setReceitas(
-      transactions
-        .filter((transaction) => transaction.type === "receita")
-        .reduce((acc, curr) => acc + Number(curr.value), 0)
-    );
-  }
-
-  function handleDespesas() {
-    if (transactions.length === 0) {
       setDespesas(0);
+      setSaldo(0);
       return;
     }
-    setDespesas(
-      transactions
-        .filter((transaction) => transaction.type === "despesa")
-        .reduce((acc, curr) => acc + Number(curr.value), 0)
-    );
-  }
+    
+    const receitasValue = transactions
+      .filter((transaction) => transaction.type === "receita")
+      .reduce((acc, curr) => acc + Number(curr.value), 0);
+    
+    const despesasValue = transactions
+      .filter((transaction) => transaction.type === "despesa")
+      .reduce((acc, curr) => acc + Number(curr.value), 0);
+    
+    setReceitas(receitasValue);
+    setDespesas(despesasValue);
+    setSaldo(receitasValue + despesasValue);
+  }, [transactions]);
 
   async function handleFilter() {
     if (user) {

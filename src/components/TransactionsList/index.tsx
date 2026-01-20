@@ -1,25 +1,9 @@
-import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { getTransactions } from "../../redux/slices/transactionsSlice";
+import { useAppSelector } from "../../redux/hooks";
 
 export default function TransactionsList() {
-  const dispatch = useAppDispatch();
-  const { transactions } = useAppSelector((state) => state.transactions);
-  const { user } = useAppSelector((state) => state.user);
-
-  useEffect(() => {
-    if (user) {
-      const currentMonth = new Date().getMonth() + 1;
-      const currentYear = new Date().getFullYear();
-      dispatch(
-        getTransactions({
-          userUid: user.uid,
-          month: currentMonth,
-          year: currentYear,
-        })
-      );
-    }
-  }, [dispatch, user]);
+  const { filteredTransactions } = useAppSelector(
+    (state) => state.transactions
+  );
 
   return (
     <div className="w-full h-full bg-white rounded-md p-4 overflow-auto text-center">
@@ -28,10 +12,10 @@ export default function TransactionsList() {
         <span className="w-full">Categoria da transação</span>
         <span className="w-full">Valor da transação</span>
       </div>
-      {transactions.length === 0 ? (
+      {filteredTransactions.length === 0 ? (
         <div className="text-gray-500 mt-4">Nenhuma transação encontrada</div>
       ) : (
-        transactions.map((transaction) => (
+        filteredTransactions.map((transaction) => (
           <div
             key={transaction.id}
             className="flex mb-2 pb-2 border-b border-gray-300"
