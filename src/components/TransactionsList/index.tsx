@@ -9,7 +9,15 @@ export default function TransactionsList() {
 
   useEffect(() => {
     if (user) {
-      dispatch(getTransactions({ userUid: user.uid, month: 0, year: 0 }));
+      const currentMonth = new Date().getMonth() + 1;
+      const currentYear = new Date().getFullYear();
+      dispatch(
+        getTransactions({
+          userUid: user.uid,
+          month: currentMonth,
+          year: currentYear,
+        })
+      );
     }
   }, [dispatch, user]);
 
