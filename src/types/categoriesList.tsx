@@ -1,4 +1,5 @@
 export const categoriesList: string[] = [
+  "Salário",
   "Alimentação",
   "Aluguel",
   "Contas",
